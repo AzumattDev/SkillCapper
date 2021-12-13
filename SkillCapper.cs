@@ -79,6 +79,9 @@ namespace SkillCapper
                                   Localization.instance.Localize("$skill_" + __instance.m_info.m_skill.GetHashCode()));
                 foreach (KeyValuePair<string, SkillConfig> skillConfig in skillConfigs)
                 {
+                    /* This mainly works only for Vanilla skills, check where possible
+                     Jotunn mods that add skills add via hash...so this would never match unless you have the has of the skill as well.
+                     */
                     if (string.Equals(__instance.m_info.m_skill.ToString(), skillConfig.Key,
                             StringComparison.CurrentCultureIgnoreCase))
                     {
@@ -87,6 +90,9 @@ namespace SkillCapper
                         return __instance.m_level < skillConfig.Value.Level;
                     }
 
+                    /* If it's a skill from SkillManager check for it using the localized name/hash.
+                     Thanks Blaxxun for making it easy to provide compatibility 
+                     */
                     if (string.Equals(skillConfig.Key,
                             Localization.instance.Localize("$skill_" + __instance.m_info.m_skill.GetHashCode()),
                             StringComparison.CurrentCultureIgnoreCase))
@@ -101,38 +107,6 @@ namespace SkillCapper
 
 
                 return true;
-
-                /*return __instance.m_info.m_skill.ToString() switch
-                {
-                    "Swords" => __instance.m_level < swords.Value,
-                    "Knives" => __instance.m_level < knives.Value,
-                    "Clubs" => __instance.m_level < clubs.Value,
-                    "Polearms" => __instance.m_level < polearms.Value,
-                    "Spears" => __instance.m_level < spears.Value,
-                    "Blocking" => __instance.m_level < blocking.Value,
-                    "Axes" => __instance.m_level < axes.Value,
-                    "Bows" => __instance.m_level < bows.Value,
-                    "Unarmed" => __instance.m_level < unarmed.Value,
-                    "Pickaxes" => __instance.m_level < pickaxes.Value,
-                    "WoodCutting" => __instance.m_level < woodCutting.Value,
-                    "Jump" => __instance.m_level < jump.Value,
-                    "Sneak" => __instance.m_level < sneak.Value,
-                    "Run" => __instance.m_level < run.Value,
-                    "Swim" => __instance.m_level < swim.Value,
-                    "Cooking" => __instance.m_level < cooking.Value,
-                    "Cartography" => __instance.m_level < cartography.Value,
-                    "Fitness" => __instance.m_level < fitness.Value,
-                    "Athletics" => __instance.m_level < athletics.Value,
-                    "Gathering" => __instance.m_level < gathering.Value,
-                    "Sailing" => __instance.m_level < sailing.Value,
-                    "Discipline" => __instance.m_level < discipline.Value,
-                    "Abjuration" => __instance.m_level < abjuration.Value,
-                    "Alteration" => __instance.m_level < alteration.Value,
-                    "Conjuration" => __instance.m_level < conjuration.Value,
-                    "Evocation" => __instance.m_level < evocation.Value,
-                    "Illusion" => __instance.m_level < illusion.Value,
-                    _ => __instance.m_level < skillCap.Value
-                };*/
             }
 
             [HarmonyPatch(typeof(Skills.Skill), nameof(Skills.Skill.Raise))]
@@ -149,34 +123,6 @@ namespace SkillCapper
         #region ConfigSetup
 
         private static ConfigEntry<bool>? _serverConfigLocked;
-        public static ConfigEntry<float> skillCap;
-        public static ConfigEntry<float> swords;
-        public static ConfigEntry<float> knives;
-        public static ConfigEntry<float> clubs;
-        public static ConfigEntry<float> polearms;
-        public static ConfigEntry<float> spears;
-        public static ConfigEntry<float> blocking;
-        public static ConfigEntry<float> axes;
-        public static ConfigEntry<float> bows;
-        public static ConfigEntry<float> unarmed;
-        public static ConfigEntry<float> pickaxes;
-        public static ConfigEntry<float> woodCutting;
-        public static ConfigEntry<float> jump;
-        public static ConfigEntry<float> sneak;
-        public static ConfigEntry<float> run;
-        public static ConfigEntry<float> swim;
-        public static ConfigEntry<float> cooking;
-        public static ConfigEntry<float> cartography;
-        public static ConfigEntry<float> fitness;
-        public static ConfigEntry<float> athletics;
-        public static ConfigEntry<float> gathering;
-        public static ConfigEntry<float> sailing;
-        public static ConfigEntry<float> discipline;
-        public static ConfigEntry<float> abjuration;
-        public static ConfigEntry<float> alteration;
-        public static ConfigEntry<float> conjuration;
-        public static ConfigEntry<float> evocation;
-        public static ConfigEntry<float> illusion;
 
         private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
             bool synchronizedSetting = true)
@@ -204,71 +150,6 @@ namespace SkillCapper
         private class ConfigurationManagerAttributes
         {
             public bool? Browsable = false;
-        }
-
-
-        private void ConfigInit()
-        {
-            /*_serverConfigLocked = config("General", "Force Server Config", true, "Force Server Config");
-            _ = configSync.AddLockingConfigEntry(_serverConfigLocked);*/
-
-            /*skillCap = config("General", "Default Skill Cap Value", 100f,
-                new ConfigDescription("Default skill cap for all skills not listed in this config file",
-                    new AcceptableValueRange<float>(0.0f, 100f)));
-            swords = config("General", "Swords Cap Value", 100f,
-                new ConfigDescription("Sword Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            knives = config("General", "Knives Cap Value", 100f,
-                new ConfigDescription("Knives Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            clubs = config("General", "Clubs Cap Value", 100f,
-                new ConfigDescription("Clubs Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            polearms = config("General", "Polearms Cap Value", 100f,
-                new ConfigDescription("Polearms Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            spears = config("General", "Spears Cap Value", 100f,
-                new ConfigDescription("Spears Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            blocking = config("General", "Blocking Cap Value", 100f,
-                new ConfigDescription("Blocking Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            axes = config("General", "Axes Cap Value", 100f,
-                new ConfigDescription("Axes Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            bows = config("General", "Bows Cap Value", 100f,
-                new ConfigDescription("Bows Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            unarmed = config("General", "Unarmed Cap Value", 100f,
-                new ConfigDescription("Unarmed Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            pickaxes = config("General", "Pickaxes Cap Value", 100f,
-                new ConfigDescription("Pickaxes Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            woodCutting = config("General", "WoodCutting Cap Value", 100f,
-                new ConfigDescription("Wood Cutting Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            jump = config("General", "Jump Cap Value", 100f,
-                new ConfigDescription("Jump Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            sneak = config("General", "Sneak Cap Value", 100f,
-                new ConfigDescription("Sneak Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            run = config("General", "Run Cap Value", 100f,
-                new ConfigDescription("Run Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            swim = config("General", "Swim Cap Value", 100f,
-                new ConfigDescription("Swim Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            cooking = config("General", "Cooking Cap Value", 100f,
-                new ConfigDescription("Cooking Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            cartography = config("General", "Cartography Cap Value", 100f,
-                new ConfigDescription("Cartography Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            fitness = config("General", "Fitness Cap Value", 100f,
-                new ConfigDescription("Fitness Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            athletics = config("General", "Athletics Cap Value", 100f,
-                new ConfigDescription("Athletics Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            gathering = config("General", "Gathering Cap Value", 100f,
-                new ConfigDescription("Gathering Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            sailing = config("General", "Sailing Cap Value", 100f,
-                new ConfigDescription("Sailing Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            discipline = config("Valheim Legends", "Discipline Cap Value", 100f,
-                new ConfigDescription("Discipline Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            abjuration = config("Valheim Legends", "Abjuration Cap Value", 100f,
-                new ConfigDescription("Abjuration Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            alteration = config("Valheim Legends", "Alteration Cap Value", 100f,
-                new ConfigDescription("Alteration Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            conjuration = config("Valheim Legends", "Conjuration Cap Value", 100f,
-                new ConfigDescription("Conjuration Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            evocation = config("Valheim Legends", "Evocation Cap Value", 100f,
-                new ConfigDescription("Evocation Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));
-            illusion = config("Valheim Legends", "Illusion Cap Value", 100f,
-                new ConfigDescription("Illusion Skill Cap", new AcceptableValueRange<float>(0.0f, 100f)));*/
         }
 
         #endregion
@@ -321,7 +202,6 @@ namespace SkillCapper
                     new Dictionary<string, SkillConfig>());
                 foreach (SkillConfig skillConfig in skillConfigs.Values)
                 {
-                    SCLogger.LogError(skillConfigs.Values.ToString());
                     // yamldotnet helpfully nulls fields if empty
                     // ReSharper disable ConstantNullCoalescingCondition
                     SkillConfig skillConfig1 = skillConfig;
