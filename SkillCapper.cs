@@ -29,9 +29,10 @@ namespace SkillCapper
         private static List<CodeInstruction> _codeInstructionsSkillDialog = new();
         public static MethodInfo TranspilerMethod;
         private static Dictionary<int, int> cappedvalues = new();
+        internal static string ConnectionError = "";
 
         private Harmony? _harmony;
-        private static readonly ManualLogSource ScLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
+        internal static readonly ManualLogSource ScLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
 
         private static readonly ConfigSync? configSync = new(ModName)
             { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
