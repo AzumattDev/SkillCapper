@@ -1,0 +1,64 @@
+swords:
+ level: 100
+knives:
+ level: 100
+club:
+ level: 100
+polearms:
+ level: 100
+spears:
+ level: 100
+blocking:
+ level: 100
+axes:
+ level: 100
+bows:
+ level: 100
+unarmed:
+ level: 100
+pickaxes:
+ level: 100
+woodcutting:
+ level: 100
+sneak:
+ level: 100
+swim:
+ level: 100
+run:
+ level: 100
+jump:
+ level: 100
+tenacity:
+ level: 100
+vitality:
+ level: 100
+packhorse:
+ level: 100
+evasion:
+ level: 100
+building:
+ level: 100
+cooking:
+ level: 100
+cartography:
+ level: 100
+fitness:
+ level: 100
+athletics:
+ level: 100
+gathering:
+ level: 100
+sailing:
+ level: 100
+discipline:
+ level: 100
+abjuration:
+ level: 100
+alteration:
+ level: 100
+conjuration:
+ level: 100
+evocation:
+ level: 100
+illusion:
+ level: 100

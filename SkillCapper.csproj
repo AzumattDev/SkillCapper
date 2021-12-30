@@ -95,6 +95,7 @@
       <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="azumatt_skillcapper_config.yaml" />
       <Content Include="ILRepack.targets" />
       <Content Include="Libs\ServerSync.dll">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
