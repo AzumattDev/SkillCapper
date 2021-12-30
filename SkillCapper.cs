@@ -21,7 +21,7 @@ namespace SkillCapper
         public const string ModVersion = "2.0.0";
         public const string ModName = "Skill Capper";
         internal const string Author = "Azumatt";
-        private const string ModGuid = "azumatt.skillcapper";
+        private const string ModGuid = "azumatt.skillCapper";
         private const string ConfigFileName = "azumatt_skillcapper_config.yaml";
         internal static string _skillConfigPath = null!;
         private static SortedDictionary<string, SkillConfig> skillConfigs = new();
