@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
@@ -27,17 +28,17 @@ namespace SkillCapper
         private static SortedDictionary<string, SkillConfig> skillConfigs = new();
         private static List<CodeInstruction> _codeInstructions = new();
         private static List<CodeInstruction> _codeInstructionsSkillDialog = new();
-        public static MethodInfo TranspilerMethod;
+        public static MethodInfo? TranspilerMethod;
         private static Dictionary<int, int> cappedvalues = new();
         internal static string ConnectionError = "";
 
         private Harmony? _harmony;
         internal static readonly ManualLogSource ScLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
 
-        private static readonly ConfigSync? configSync = new(ModName)
+        private static readonly ConfigSync ConfigSync = new(ModName)
             { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
 
-        private static readonly CustomSyncedValue<string> skillConfigData = new(configSync, "skillConfig", "");
+        private static readonly CustomSyncedValue<string> SkillConfigData = new(ConfigSync, "skillConfig", "");
 
         #region UnityEvents
 
@@ -51,7 +52,7 @@ namespace SkillCapper
         {
             /*ConfigInit();*/
             _serverConfigLocked = config("General", "Force Server Config", true, "Force Server Config");
-            _ = configSync?.AddLockingConfigEntry(_serverConfigLocked);
+            _ = ConfigSync?.AddLockingConfigEntry(_serverConfigLocked);
 
 
             _skillConfigPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
@@ -63,7 +64,7 @@ namespace SkillCapper
 
             _harmony = new Harmony(ModGuid);
 
-            skillConfigData.ValueChanged += OnValChangedUpdate;
+            SkillConfigData.ValueChanged += OnValChangedUpdate;
             TranspilerMethod = AccessTools.Method(typeof(ScPlugin), nameof(AzuLimitSkill),
                 new Type[] { typeof(Skills.Skill) });
             _codeInstructions.Add(new CodeInstruction(OpCodes.Ldarg_0));
@@ -74,6 +75,7 @@ namespace SkillCapper
 
 
             ReadYamlConfigFile(null!, null!);
+            File.Create(Paths.ConfigPath + Path.DirectorySeparatorChar + "AzuSkillFile.txt");
             SetupWatcher();
 
             _harmony.PatchAll();
@@ -215,6 +217,31 @@ namespace SkillCapper
             }
         }
 
+        [HarmonyPatch(typeof(SkillsDialog), nameof(SkillsDialog.Setup))]
+        static class Skill_Awake_FileCreationPatch
+        {
+            static bool beenHere;
+
+            static void Postfix(SkillsDialog __instance, ref Player player)
+            {
+                StringBuilder builder = new();
+                List<string> list = ((IEnumerable<string>)Enum.GetNames(typeof(Skills.SkillType))).ToList<string>();
+                list.Remove(Skills.SkillType.All.ToString());
+                list.Remove(Skills.SkillType.None.ToString());
+                list.Remove(Skills.SkillType.FireMagic.ToString());
+                list.Remove(Skills.SkillType.FrostMagic.ToString());
+
+                foreach (string s in list)
+                {
+                    builder.AppendLine(s);
+                }
+
+                File.WriteAllText(Paths.ConfigPath + Path.DirectorySeparatorChar + "AzuSkillFile.txt",
+                    builder.ToString());
+                beenHere = true;
+            }
+        }
+
         [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
         static class Player_SetLocalPlayer_Patch
         {
@@ -229,7 +256,6 @@ namespace SkillCapper
                     if (split.Length < 2) continue;
 
                     string name = split[1].ToLower();
-
                     if (!skillConfigs.ContainsKey(name)) continue;
 
                     cappedvalues.Add((int)skill.m_info.m_skill, (int)skillConfigs[name].Level);
@@ -266,7 +292,7 @@ namespace SkillCapper
 
         #region ConfigSetup
 
-        private static ConfigEntry<bool>? _serverConfigLocked;
+        private static ConfigEntry<bool> _serverConfigLocked = null!;
 
         private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
             bool synchronizedSetting = true)
@@ -279,7 +305,7 @@ namespace SkillCapper
             ConfigEntry<T> configEntry = Config.Bind(group, name, value, extendedDescription);
             //var configEntry = Config.Bind(group, name, value, description);
 
-            SyncedConfigEntry<T> syncedConfigEntry = configSync.AddConfigEntry(configEntry);
+            SyncedConfigEntry<T> syncedConfigEntry = ConfigSync.AddConfigEntry(configEntry);
             syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
 
             return configEntry;
@@ -325,7 +351,7 @@ namespace SkillCapper
                     deserializer.Deserialize<SortedDictionary<string, SkillConfig>>(file);
                 skillConfigs = tmp;
                 file.Close();
-                skillConfigData.AssignLocalValue(File.ReadAllText(_skillConfigPath));
+                SkillConfigData.AssignLocalValue(File.ReadAllText(_skillConfigPath));
             }
             catch
             {
@@ -342,7 +368,7 @@ namespace SkillCapper
             try
             {
                 skillConfigs = new SortedDictionary<string, SkillConfig>(
-                    deserializer.Deserialize<Dictionary<string, SkillConfig>?>(skillConfigData.Value) ??
+                    deserializer.Deserialize<Dictionary<string, SkillConfig>?>(SkillConfigData.Value) ??
                     new Dictionary<string, SkillConfig>());
                 foreach (SkillConfig skillConfig in skillConfigs.Values)
                 {
