@@ -35,6 +35,8 @@ namespace SkillCapper
             ListSkillsDefault.Add("swim", new SkillConfig { Level = 100 });
             ListSkillsDefault.Add("run", new SkillConfig { Level = 100 });
             ListSkillsDefault.Add("jump", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("elementalmagic", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("bloodmagic", new SkillConfig { Level = 100 });
             ListSkillsDefault.Add("tenacity", new SkillConfig { Level = 100 });
             ListSkillsDefault.Add("vitality", new SkillConfig { Level = 100 });
             ListSkillsDefault.Add("packhorse", new SkillConfig { Level = 100 });
@@ -52,6 +54,7 @@ namespace SkillCapper
             ListSkillsDefault.Add("conjuration", new SkillConfig { Level = 100 });
             ListSkillsDefault.Add("evocation", new SkillConfig { Level = 100 });
             ListSkillsDefault.Add("illusion", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("jewelcrafting", new SkillConfig { Level = 100 });
 
             ISerializer serializer = new SerializerBuilder().DisableAliases()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
