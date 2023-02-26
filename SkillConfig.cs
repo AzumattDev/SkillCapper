@@ -20,41 +20,42 @@ namespace SkillCapper
 
         internal static void WriteDefaultValues()
         {
-            ListSkillsDefault.Add("swords", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("knives", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("club", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("polearms", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("spears", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("blocking", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("axes", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("bows", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("unarmed", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("pickaxes", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("woodcutting", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("sneak", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("swim", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("run", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("jump", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("elementalmagic", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("bloodmagic", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("tenacity", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("vitality", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("packhorse", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("evasion", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("building", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("cooking", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("cartography", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("fitness", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("athletics", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("gathering", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("sailing", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("discipline", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("abjuration", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("alteration", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("conjuration", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("evocation", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("illusion", new SkillConfig { Level = 100 });
-            ListSkillsDefault.Add("jewelcrafting", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Swords", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Knives", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Club", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Polearms", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Spears", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Blocking", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Axes", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Bows", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Unarmed", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Pickaxes", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Woodcutting", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Sneak", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Swim", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Run", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Jump", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("ElementalMagic", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("BloodMagic", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Tenacity", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Vitality", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Packhorse", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Evasion", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Building", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Cooking", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Cartography", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Fitness", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Athletics", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Gathering", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Sailing", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Discipline", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Abjuration", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Alteration", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Conjuration", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Evocation", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Illusion", new SkillConfig { Level = 100 });
+            ListSkillsDefault.Add("Jewelcrafting", new SkillConfig { Level = 100 });
+
 
             ISerializer serializer = new SerializerBuilder().DisableAliases()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)

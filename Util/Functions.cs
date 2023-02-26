@@ -8,7 +8,7 @@ public class Functions
 {
     internal static IEnumerable<CodeInstruction> LimitSkillTranspiler(IEnumerable<CodeInstruction> instructions)
     {
-        var limitMethod = AccessTools.Method(typeof(Functions), nameof(Functions.AzuLimitSkill));
+        var limitMethod = AccessTools.Method(typeof(Functions), nameof(AzuLimitSkill));
 
         foreach (var instruction in instructions)
         {

@@ -12,6 +12,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using ServerSync;
 using SkillCapper.Util;
+using UnityEngine;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -120,10 +121,22 @@ namespace SkillCapper
         [HarmonyPatch(typeof(Skills), nameof(Skills.GetSkillFactor))]
         static class SkillsGetSkillFactorPatch
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            static void Postfix(Skills __instance, Skills.SkillType skillType, ref float __result)
+            {
+                if (skillType == Skills.SkillType.None)
+                {
+                    __result = 0f;
+                }
+                else
+                {
+                    float level = Mathf.Min(0,__instance.GetSkillLevel(skillType) / 100f);
+                    __result = level;
+                }
+            }
+            /*private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 return Functions.LimitSkillTranspiler(instructions);
-            }
+            }*/
         }
 
         [HarmonyPatch(typeof(Skills), nameof(Skills.CheatRaiseSkill))]
@@ -174,10 +187,10 @@ namespace SkillCapper
         [HarmonyPatch(typeof(SkillsDialog), nameof(SkillsDialog.Setup))]
         static class SkillAwakeFileCreationPatch
         {
-            static bool beenHere;
 
             static void Postfix(SkillsDialog __instance, ref Player player)
             {
+#if DEBUG
                 // TODO: Make this work with custom skills, not just those defined in the enum from vanilla.
                 StringBuilder builder = new();
                 List<string> list = ((IEnumerable<string>)Enum.GetNames(typeof(Skills.SkillType))).ToList<string>();
@@ -190,7 +203,7 @@ namespace SkillCapper
                 }
 
                 File.WriteAllText(ReferenceFilePath, builder.ToString());
-                beenHere = true;
+#endif
             }
         }
 
@@ -247,7 +260,7 @@ namespace SkillCapper
         #endregion
 
         #region ConfigSetup
-        private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
+        /*private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
             bool synchronizedSetting = true)
         {
             ConfigDescription extendedDescription =
@@ -268,7 +281,7 @@ namespace SkillCapper
             bool synchronizedSetting = true)
         {
             return config(group, name, value, new ConfigDescription(description), synchronizedSetting);
-        }
+        }*/
 
         private class ConfigurationManagerAttributes
         {
