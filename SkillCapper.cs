@@ -21,7 +21,7 @@ namespace SkillCapper
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     public class ScPlugin : BaseUnityPlugin
     {
-        public const string ModVersion = "3.0.0";
+        public const string ModVersion = "3.0.1";
         public const string ModName = "SkillCapper";
         internal const string Author = "Azumatt";
         private const string ModGuid = $"{Author}.{ModName}";
@@ -36,8 +36,7 @@ namespace SkillCapper
         private Harmony? _harmony;
         internal static readonly ManualLogSource ScLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
 
-        private static readonly ConfigSync ConfigSync = new(ModName)
-            { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
+        private static readonly ConfigSync ConfigSync = new(ModName) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
 
         private static readonly CustomSyncedValue<string> SkillConfigData = new(ConfigSync, "skillConfig", "");
 
@@ -82,9 +81,7 @@ namespace SkillCapper
         {
             private static bool Prefix(Skills.Skill __instance)
             {
-                ScLogger.LogDebug("Skill Being Raised-----------------: " +
-                                  __instance.m_info.m_skill.ToString().ToUpper() + " a.k.a. " +
-                                  Localization.instance.Localize("$skill_" + __instance.m_info.m_skill.GetHashCode()));
+                ScLogger.LogDebug($"Skill Being Raised-----------------: {__instance.m_info.m_skill.ToString().ToUpper()} a.k.a. {Localization.instance.Localize("$skill_" + __instance.m_info.m_skill.GetHashCode())}");
                 foreach (KeyValuePair<string, SkillConfig> skillConfig in skillConfigs)
                 {
                     /* This mainly works only for Vanilla skills, check where possible */
@@ -99,8 +96,7 @@ namespace SkillCapper
                     /* If it's a skill from SkillManager check for it using the localized name/hash.
                      Thanks Blaxxun for making it easy to provide compatibility, Jotunn has adopted this for compatibility, but not sure if it works with it yet.
                     */
-                    if (string.Equals(skillConfig.Key,
-                            Localization.instance.Localize("$skill_" + __instance.m_info.m_skill.GetHashCode()),
+                    if (string.Equals(skillConfig.Key, Localization.instance.Localize($"$skill_{__instance.m_info.m_skill.GetHashCode()}"),
                             StringComparison.CurrentCultureIgnoreCase))
                     {
                         ScLogger.LogDebug($"Skill {skillConfig.Key}, hash matched!{Environment.NewLine}Level Cap: {skillConfig.Value.Level}");
@@ -121,7 +117,7 @@ namespace SkillCapper
         [HarmonyPatch(typeof(Skills), nameof(Skills.GetSkillFactor))]
         static class SkillsGetSkillFactorPatch
         {
-            static void Postfix(Skills __instance, Skills.SkillType skillType, ref float __result)
+            static void Prefix(Skills __instance, Skills.SkillType skillType, ref float __result)
             {
                 if (skillType == Skills.SkillType.None)
                 {
@@ -129,11 +125,19 @@ namespace SkillCapper
                 }
                 else
                 {
-                    float level = Mathf.Min(0,__instance.GetSkillLevel(skillType) / 100f);
-                    __result = level;
+                    float skillLevel = __instance.GetSkillLevel(skillType);
+
+                    // skill factor increases linearly from 0 to 2 as skill level goes from 0 to 200, 
+                    // but is never less than 0
+                    __result = Mathf.Max(0, skillLevel / 100f);
+                    // Log the result
+                    ScLogger.LogDebug($"Skill Factor: {__result}");
+                    ScLogger.LogDebug($"Normal Skill Factor: {Mathf.Clamp01(__instance.GetSkillLevel(skillType) / 100f)}");
                 }
             }
-            /*private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+
+            /*[HarmonyEmitIL("C:\\Users\\crypt\\AppData\\Roaming\\r2modmanPlus-local\\Valheim\\profiles\\TEST\\BepInEx\\plugins\\Azumatt-SkillCapper")]
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 return Functions.LimitSkillTranspiler(instructions);
             }*/
@@ -187,7 +191,6 @@ namespace SkillCapper
         [HarmonyPatch(typeof(SkillsDialog), nameof(SkillsDialog.Setup))]
         static class SkillAwakeFileCreationPatch
         {
-
             static void Postfix(SkillsDialog __instance, ref Player player)
             {
 #if DEBUG
@@ -208,7 +211,7 @@ namespace SkillCapper
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
-        static class PlayerSetLocalPlayerPatch
+        static class PlayerOnSpawnedPlayerPatch
         {
             static void Postfix(Player __instance)
             {
@@ -250,7 +253,7 @@ namespace SkillCapper
 
                     string name = split[1].ToLower();
 
-                    if (!skillConfigs.ContainsKey(name)) continue;
+                    if (skillConfigs.ContainsKey(name)) continue;
 
                     cappedvalues.Add((int)skill.m_info.m_skill, (int)skillConfigs[name].Level);
                 }
@@ -260,6 +263,7 @@ namespace SkillCapper
         #endregion
 
         #region ConfigSetup
+
         /*private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
             bool synchronizedSetting = true)
         {

@@ -26,11 +26,19 @@ public class Functions
 
     public static float AzuLimitSkill(Skills.Skill skill)
     {
+        // Log the skill and teh capped value
+        ScPlugin.ScLogger.LogWarning(ScPlugin.cappedvalues.ContainsKey((int)skill.m_info.m_skill) ? $"Skill: {skill.m_info.m_skill} Capped Value: {ScPlugin.cappedvalues[(int)skill.m_info.m_skill]}" : $"Logging 100 for skill {skill.m_info.m_skill}");
+// Print the keys
+        foreach (var key in ScPlugin.cappedvalues.Keys)
+        {
+            ScPlugin.ScLogger.LogWarning($"Key: {key}");
+        }
+
         return ScPlugin.cappedvalues.ContainsKey((int)skill.m_info.m_skill)
             ? ScPlugin.cappedvalues[(int)skill.m_info.m_skill]
             : 100f;
     }
-    
+
     private static Skills.Skill GetSkillToCap(Skills.SkillType skilltype)
     {
         Skills.Skill skill1;
