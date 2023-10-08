@@ -21,7 +21,7 @@ namespace SkillCapper
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     public class ScPlugin : BaseUnityPlugin
     {
-        public const string ModVersion = "3.0.1";
+        public const string ModVersion = "3.0.2";
         public const string ModName = "SkillCapper";
         internal const string Author = "Azumatt";
         private const string ModGuid = $"{Author}.{ModName}";
@@ -52,6 +52,7 @@ namespace SkillCapper
                 File.Create(_skillConfigPath).Dispose();
                 WriteDefaults.WriteDefaultValues();
             }
+
             if (!File.Exists(ReferenceFilePath))
             {
                 File.Create(ReferenceFilePath).Dispose();
@@ -244,6 +245,7 @@ namespace SkillCapper
             {
                 /* For players that might not die as much or at all. Update the values in their list every morning in game */
                 if (Player.m_localPlayer == null) return;
+                if (Player.m_localPlayer.IsDead() || Player.m_localPlayer.IsTeleporting()) return;
                 cappedvalues.Clear();
                 foreach (Skills.Skill? skill in Player.m_localPlayer.GetSkills().GetSkillList())
                 {
@@ -253,9 +255,12 @@ namespace SkillCapper
 
                     string name = split[1].ToLower();
 
+                    if (skillConfigs == null) continue;
                     if (skillConfigs.ContainsKey(name)) continue;
-
-                    cappedvalues.Add((int)skill.m_info.m_skill, (int)skillConfigs[name].Level);
+                    if (skillConfigs[name].Level != null)
+                    {
+                        cappedvalues.Add((int)skill.m_info.m_skill, (int)skillConfigs[name].Level!);
+                    }
                 }
             }
         }
