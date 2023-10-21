@@ -21,7 +21,7 @@ namespace SkillCapper
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     public class ScPlugin : BaseUnityPlugin
     {
-        public const string ModVersion = "3.0.2";
+        public const string ModVersion = "3.0.3";
         public const string ModName = "SkillCapper";
         internal const string Author = "Azumatt";
         private const string ModGuid = $"{Author}.{ModName}";
@@ -244,23 +244,30 @@ namespace SkillCapper
             static void Postfix(EnvMan __instance)
             {
                 /* For players that might not die as much or at all. Update the values in their list every morning in game */
-                if (Player.m_localPlayer == null) return;
-                if (Player.m_localPlayer.IsDead() || Player.m_localPlayer.IsTeleporting()) return;
+                if (Player.m_localPlayer == null || Player.m_localPlayer.IsDead() || Player.m_localPlayer.IsTeleporting())
+                    return;
+
                 cappedvalues.Clear();
+
+                if (skillConfigs == null) return;
+
                 foreach (Skills.Skill? skill in Player.m_localPlayer.GetSkills().GetSkillList())
                 {
                     string[] split = skill.m_info.m_description.Split('_');
 
-                    if (split.Length < 2) continue;
+                    if (split.Length < 2)
+                        continue;
 
                     string name = split[1].ToLower();
 
-                    if (skillConfigs == null) continue;
-                    if (skillConfigs.ContainsKey(name)) continue;
-                    if (skillConfigs[name].Level != null)
-                    {
-                        cappedvalues.Add((int)skill.m_info.m_skill, (int)skillConfigs[name].Level!);
-                    }
+                    if (!skillConfigs.ContainsKey(name))
+                        continue;
+                    
+                    if (skillConfigs[name].Level == null) continue;
+                    if (cappedvalues.ContainsKey((int)skill.m_info.m_skill)) continue;
+                    int? level = skillConfigs[name].Level;
+                    if (level != null)
+                        cappedvalues.Add((int)skill.m_info.m_skill, (int)level);
                 }
             }
         }
