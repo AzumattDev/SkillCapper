@@ -21,7 +21,7 @@ namespace SkillCapper
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     public class ScPlugin : BaseUnityPlugin
     {
-        public const string ModVersion = "3.0.3";
+        public const string ModVersion = "3.0.4";
         public const string ModName = "SkillCapper";
         internal const string Author = "Azumatt";
         private const string ModGuid = $"{Author}.{ModName}";
